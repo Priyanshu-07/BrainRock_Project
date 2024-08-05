@@ -1,0 +1,39 @@
+.form-container
+{
+    padding: 16px;
+    width: 50%;
+    margin: auto;
+}
+
+.btn{
+    display: block;
+    width: 100%;
+}
+
+.dropdown-container
+{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.dropdown-menu {
+    text-align: center;
+    width: 100%;
+}
+
+.form-group > input
+{
+    border: 1px solid rgb(155, 155, 155);
+}
+
+.ls, .form-group
+{
+    letter-spacing: 1px;
+}
+
+.heading-text
+{
+    background-color: #323841;
+    color: white;
+}

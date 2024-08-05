@@ -1,0 +1,275 @@
+<!-- Databse Connection -->
+
+<?php
+session_start();
+$server = 'localhost';
+$username = 'root';
+$password = 'Rohan@123*';
+$database = 'infant';
+$port = 3307;
+
+$conn = new mysqli($server . ':' . $port, $username, $password, $database);
+?>
+    
+    
+    
+    <!-- Delete code -->
+    <?php
+    if (isset($_GET['delete'])) {
+        $id = $_GET['delete'];
+        $sql = "DELETE FROM `infant_child_details` WHERE `infant_child_details`.`cid` = $id";
+        $result = mysqli_query($conn, $sql) or die("Error: database not connected");
+        echo "<script>alert('Data deleted successfully.')</script>";
+        echo "<script>window.location.href='/KANYA_YOJNA/index.php'</script>";
+    }
+    ?>
+
+
+<!-- insert function -->
+<?php
+if (isset($_POST['form-submit'])) {
+    $name = $_POST['name'];
+    $blood_group = $_POST['blood-group'];
+    $guardian_name = $_POST['guardian-name'];
+    $guardian_phone = $_POST['guardian-phone'];
+    $dob = $_POST['dob'];
+    $address = $_POST['address'];
+    $aadhar = $_POST['aadhar'];
+
+    $sql = "INSERT INTO infant_child_details(`name`,`blood group`, `guardian name`, `guardian phone`, `dob`, `address`, `aadhar`)VALUES('$name','$blood_group','$guardian_name','$guardian_phone','$dob','$address','$aadhar')";
+    $result = mysqli_query($conn, $sql);
+    if ($result) {
+        echo "Data inserted successfully";
+        echo "<script>window.location.href='/KANYA_YOJNA/index.php'</script>";
+    } else {
+        echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+    }
+}
+?>
+
+
+<div class="col-md-6">
+                <h3 class="text-center mt-3">Infant Child Details</h3>
+                <table class="table table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Sno.</th>
+                            <th>Name</th>
+                            <th>Blood Group</th>
+                            <th>Guardian Name</th>
+                            <th>Guardian Phone</th>
+                            <th>DOB</th>
+                            <th>Address</th>
+                            <th>Aadhar</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Select query -->
+                        <?php
+                        $count = 1;
+                        $sql = "SELECT * from infant_child_details";
+                        $result = mysqli_query($conn, $sql);
+                        if (mysqli_num_rows($result) > 0) {
+                            while ($row = mysqli_fetch_assoc($result)) {
+                        ?>
+                                <tr>
+                                    <td><?php echo $count++; ?></td>
+                                    <td><?php echo $row['name'] ?></td>
+                                    <td><?php echo $row['blood group'] ?></td>
+                                    <td><?php echo $row['guardian name'] ?></td>
+                                    <td><?php echo $row['guardian phone'] ?></td>
+                                    <td><?php echo $row['dob'] ?></td>
+                                    <td><?php echo $row['address'] ?></td>
+                                    <td><?php echo $row['aadhar'] ?></td>
+                                    <td>
+                                        <a class="btn btn-primary btn-sm" href="index.php?edit=<?= $row['cid']; ?>">Edit</a>
+                                        <a class="btn btn-primary btn-sm" href="index.php?delete=<?= $row['cid']; ?>">Delete</a>
+                                    </td>
+                                </tr>
+                            <?php
+                            }
+                        } else {
+                            ?>
+                            <tr>
+                                <td colspan="8" class="text-center">No Data Found</td>
+                            </tr>
+
+                        <?php
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+
+
+
+
+
+                <!-- Update code -->
+    <?php
+    if (isset($_GET['edit'])) {
+        $id = $_GET['edit'];
+        $temp = $_SESSION['edit'] = $id;
+        $sql = "SELECT * FROM infant_child_details where cid = $id";
+        $result = mysqli_query($conn, $sql);
+        if (mysqli_num_rows($result) > 0) {
+            while ($row = mysqli_fetch_assoc($result)) {
+                $name = $row['name'];
+                $blood_group = $row['blood group'];
+                $guardian_name = $row['guardian name'];
+                $guardian_phone = $row['guardian phone'];
+                $dob = $row['dob'];
+                $address = $row['address'];
+                $aadhar = $row['aadhar'];
+    ?>
+                <div class="container">
+                    <h3 class="text-center mt-5 update">Update Infant Child Details</h3>
+                    <form action="/KANYA_YOJNA/index.php" method="POST">
+                        <div class="form-group my-3">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" class="form-control from-text" name="name" placeholder="Enter your Name." value="<?php echo $name; ?>" required />
+                        </div>
+                        <div class="form-group my-3">
+                            <label for="blood-group">Blood Group</label>
+                            <input type="text" id="blood-group" class="form-control from-text" name="blood-group" value="<?php echo $blood_group; ?>" required />
+                        </div>
+                        <div class="form-group my-3">
+                            <label for="guardian-name">Guardian Name</label>
+                            <input type="text" id="guardian-name" class="form-control from-text" name="guardian-name" value="<?php echo $guardian_name; ?>" required />
+                        </div>
+                        <div class="form-group my-3">
+                            <label for="guardian-phone">Guardian Phone</label>
+                            <input type="number" id="guardian-phone" class="form-control from-text" name="guardian-phone" value="<?php echo $guardian_phone; ?>" required />
+                        </div>
+                        <div class="form-group my-3">
+                            <label for="dob">Date of Birth</label>
+                            <input type="date" id="dob" class="form-control from-text" name="dob" value="<?php echo $dob; ?>" required />
+                        </div>
+                        <div class="form-group my-3">
+                            <label for="address">Address</label>
+                            <input type="address" id="address" class="form-control from-text" name="address" value="<?php echo $address; ?>" required />
+                        </div>
+                        <div class="form-group my-3">
+                            <label for="aadhar">Aadhar</label>
+                            <input type="number" id="aadhar" class="form-control from-text" name="aadhar" value="<?php echo $aadhar; ?>" required />
+                        </div>
+
+                        <button type="submit" class="btn btn-primary mb-4" name="update-form">Update Details</button>
+                    </form>
+                </div>
+
+    <?php
+            }
+        }
+    }
+
+    if (isset($_POST['update-form'])) {
+        $temp = $_SESSION['edit'];
+        $name = $_POST['name'];
+        $blood_group = $_POST['blood-group'];
+        $guardian_name = $_POST['guardian-name'];
+        $guardian_phone = $_POST['guardian-phone'];
+        $dob = $_POST['dob'];
+        $address = $_POST['address'];
+        $aadhar = $_POST['aadhar'];
+
+        $sql = "UPDATE `infant_child_details` SET `name` = '$name', `dob` = '$dob', `blood group` = '$blood_group', `guardian name` = '$guardian_name', `guardian phone` = '$guardian_phone', `aadhar` = '$aadhar', `address` = '$address' WHERE `infant_child_details`.`cid` = $temp";
+        $result = mysqli_query($conn, $sql) or die("Error: Databse not connected");
+        echo "<script>alert(Data updated successfully);</script>";
+        echo "<br>";
+        echo "<script>window.location.href='index.php'</script>";
+        echo "<script>alert(Data not updated);</script>";
+    }
+    ?>
+
+-----------------------------------------------------------------------------------------------
+    <?php
+    session_start();
+    include '../Database/connection.php';
+    if (isset($_POST['form-submit'])) {
+        $loginType = $_POST['role'];
+        $sectorName = "";
+        $districtName = "";
+
+        if ($loginType === 'state') {
+            $stateName = 'st';
+            $Password = $_POST['pass'];
+        } elseif ($loginType === 'district') {
+            // $sectorName = 'District Sector'; // Assuming a default sector name for district
+            $districtName = $_POST['chdis'];
+            $Password = $_POST['pass'];
+        } elseif ($loginType === 'project') {
+            $sectorName = $_POST['chpro'];
+            // $districtName = $_POST['chdis']; // Assuming district name is also needed for project
+            $Password = $_POST['pass'];
+        }
+
+        $sql = "SELECT * FROM area_table WHERE sector='$sectorName' AND district='$districtName' AND def_pass='$Password'";
+        $result = mysqli_query($conn, $sql) or die("Error");
+
+        if (mysqli_num_rows($result) > 0) {
+            echo "<script>alert('Login successfully')</script>";
+            echo "<script>window.open('welcome.php', '_self')</script>";
+        } else {
+            echo "<script>alert('Invalid credentials')</script>";
+        }
+    }
+    ?>
+
+
+<?php
+    session_start();
+    include '../Database/connection.php';
+    if (isset($_POST['form-submit'])) {
+        $loginType = $_POST['role'];
+        $stateName = "";
+        $sectorName = "";
+        $districtName = "";
+        $Password = $_POST['pass'];
+
+        if ($loginType === 'state') {
+            $stateName = 'Uttarakhand';
+        } elseif ($loginType === 'district') {
+            $districtName = $_POST['chdis'];
+        } elseif ($loginType === 'project') {
+            $sectorName = $_POST['chpro'];
+        }
+
+        $sql = "SELECT * FROM area_table WHERE sector='$sectorName' AND district='$districtName' AND def_pass='$Password'";
+        if ($loginType === 'state') {
+            $sql = "SELECT * FROM area_table WHERE state='$stateName' AND def_pass='$Password'";
+        } elseif ($loginType === 'district') {
+            $sql = "SELECT * FROM area_table WHERE district='$districtName' AND def_pass='$Password'";
+        } elseif ($loginType === 'project') {
+            $sql = "SELECT * FROM area_table WHERE sector='$sectorName' AND def_pass='$Password'";
+        }
+        
+        $result = mysqli_query($conn, $sql) or die("Error");
+
+        if (mysqli_num_rows($result) > 0) {
+            echo "<script>alert('Login successfully'); window.open('welcome.php', '_self');</script>";
+        } else {
+            echo "<script>alert('Invalid credentials');</script>";
+        }
+    }
+    ?>
+
+    ======================================================================
+    <?php 
+if(isset($_POST['sector_log']))
+{
+    $loginType=$_POST['loginType'];
+    $sectorName=$_POST['sector_name'];
+    $districtName=$_POST['district_name'];
+    $Password=$_POST['LoginPassword'];
+    $sql="SELECT * FROM sector_district WHERE sector='$sectorName' AND district='$districtName' AND def_password='$Password'";
+    $result=mysqli_query($con, $sql)or die("Error");
+    if($result)
+    {
+        echo "<script>alert('Login successfully')</script>";
+        echo "<script>window.open('welcome.php')</script>";
+    }
+
+}
+    ?>
